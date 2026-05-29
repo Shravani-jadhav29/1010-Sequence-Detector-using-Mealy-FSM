@@ -1,0 +1,69 @@
+`timescale 1ns / 1ps
+
+module Finite_state_cycle (
+        input clk,
+    input rst,
+    input in,
+    output reg out
+);
+
+    
+    reg [1:0] state;
+
+    parameter S0 = 2'b00,
+              S1 = 2'b01,
+              S2 = 2'b10,
+              S3 = 2'b11;
+
+    
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            state <= S0;
+            out   <= 0;
+        end else begin
+            case (state)
+            
+            
+                S0: begin
+                    if (in)
+                        state <= S1;
+                    else
+                        state <= S0;
+                    out <= 0;
+                end
+
+                S1: begin
+                    if (!in)
+                        state <= S2;
+                    else
+                        state <= S1;
+                    out <= 0;
+                end
+
+                S2: begin
+                    if (in)
+                        state <= S3;
+                    else
+                        state <= S0;
+                    out <= 0;
+                end
+
+                S3: begin
+                    if (!in) begin
+                        state <= S2;  
+                        out <= 1;     
+                    end else begin
+                        state <= S1;
+                        out <= 0;
+                    end
+                end
+
+                default: begin
+                    state <= S0;
+                    out <= 0;
+                end
+            endcase
+        end
+    end
+
+endmodule
